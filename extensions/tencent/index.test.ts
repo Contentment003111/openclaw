@@ -23,7 +23,7 @@ async function getProvider(id = "tencent-tokenhub") {
 }
 
 function hyReasoningModel(
-  id: "hy3" | "hy3-preview" | "hy4-preview" = "hy3",
+  id: "hy3" | "hy3-preview" | "hy4" | "hy4-preview" = "hy3",
   provider: "tencent-tokenhub" | "tencent-tokenplan" = "tencent-tokenhub",
 ): OpenAICompletionsModel {
   return {
@@ -43,7 +43,12 @@ function hyReasoningModel(
     compat: {
       supportsUsageInStreaming: true,
       supportsReasoningEffort: true,
-      supportedReasoningEfforts: id === "hy3-preview" ? ["none", "low", "high"] : ["none", "high"],
+      supportedReasoningEfforts:
+        id === "hy3-preview"
+          ? ["none", "low", "high"]
+          : id === "hy4"
+            ? ["none", "high", "max"]
+            : ["none", "high"],
     },
   } as OpenAICompletionsModel;
 }
@@ -80,8 +85,8 @@ function capturePayload(
 
 describe("tencent provider plugin", () => {
   it.each([
-    ["tokenhub", "TokenHub", ["hy4-preview", "hy3", "hy3-preview"]],
-    ["tokenplan", "TokenPlan", ["hy4-preview", "hy3"]],
+    ["tokenhub", "TokenHub", ["hy4-preview", "hy4", "hy3", "hy3-preview"]],
+    ["tokenplan", "TokenPlan", ["hy4-preview", "hy4", "hy3"]],
   ] as const)(
     "configures only %s through its registered auth choice in replace mode",
     async (endpoint, label, modelIds) => {
@@ -197,5 +202,21 @@ describe("tencent provider plugin", () => {
     expect(
       capturePayload(tokenHubProvider, hyReasoningModel("hy3-preview"), "low")?.reasoning_effort,
     ).toBe("low");
+  });
+
+  it("keeps hy4 on its three-rung ladder so max is not collapsed onto high", async () => {
+    // hy4 adds a `max` rung over hy4-preview's none/high. The two-rung rewrite is
+    // scoped to hy3, so routing hy4 through it would silently downgrade `max`.
+    for (const [provider, model] of [
+      [await getProvider(), hyReasoningModel("hy4")],
+      [await getProvider("tencent-tokenplan"), hyReasoningModel("hy4", "tencent-tokenplan")],
+    ] as const) {
+      for (const rung of ["none", "high", "max"] as const) {
+        expect(
+          capturePayload(provider, model, rung)?.reasoning_effort,
+          `${model.provider}/hy4 ${rung}`,
+        ).toBe(rung);
+      }
+    }
   });
 });

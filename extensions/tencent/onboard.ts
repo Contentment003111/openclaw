@@ -16,6 +16,7 @@ import manifest from "./openclaw.plugin.json" with { type: "json" };
 // silently mislabels whichever model becomes the default next.
 const TOKENHUB_HY3_MODEL_REF = `${TOKENHUB_PROVIDER_ID}/hy3`;
 const TOKENHUB_HY3_PREVIEW_MODEL_REF = `${TOKENHUB_PROVIDER_ID}/hy3-preview`;
+const TOKENHUB_HY4_MODEL_REF = `${TOKENHUB_PROVIDER_ID}/hy4`;
 const TOKENHUB_HY4_PREVIEW_MODEL_REF = `${TOKENHUB_PROVIDER_ID}/hy4-preview`;
 export const TOKENHUB_DEFAULT_MODEL_REF = readManifestProviderDefaultModelRef(
   manifest,
@@ -31,6 +32,7 @@ export const { applyConfig: applyTokenHubConfig } = createProviderConnectionPres
     catalogModels: TOKENHUB_MODEL_CATALOG,
     aliases: [
       { modelRef: TOKENHUB_HY4_PREVIEW_MODEL_REF, alias: "Hy4 preview (TokenHub)" },
+      { modelRef: TOKENHUB_HY4_MODEL_REF, alias: "Hy4 (TokenHub)" },
       { modelRef: TOKENHUB_HY3_MODEL_REF, alias: "Hy3 (TokenHub)" },
       { modelRef: TOKENHUB_HY3_PREVIEW_MODEL_REF, alias: "Hy3 preview (TokenHub)" },
     ],
@@ -38,6 +40,7 @@ export const { applyConfig: applyTokenHubConfig } = createProviderConnectionPres
 });
 
 const TOKENPLAN_HY3_MODEL_REF = `${TOKENPLAN_PROVIDER_ID}/hy3`;
+const TOKENPLAN_HY4_MODEL_REF = `${TOKENPLAN_PROVIDER_ID}/hy4`;
 const TOKENPLAN_HY4_PREVIEW_MODEL_REF = `${TOKENPLAN_PROVIDER_ID}/hy4-preview`;
 export const TOKENPLAN_DEFAULT_MODEL_REF = readManifestProviderDefaultModelRef(
   manifest,
@@ -53,6 +56,7 @@ export const { applyConfig: applyTokenPlanConfig } = createProviderConnectionPre
     catalogModels: TOKENPLAN_MODEL_CATALOG,
     aliases: [
       { modelRef: TOKENPLAN_HY4_PREVIEW_MODEL_REF, alias: "Hy4 preview (TokenPlan)" },
+      { modelRef: TOKENPLAN_HY4_MODEL_REF, alias: "Hy4 (TokenPlan)" },
       { modelRef: TOKENPLAN_HY3_MODEL_REF, alias: "Hy3 (TokenPlan)" },
     ],
   }),
