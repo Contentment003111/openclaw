@@ -104,20 +104,19 @@ on the server.
 | Model ref                       | Name                    | Input        | Context   | Max output | Notes                          |
 | ------------------------------- | ----------------------- | ------------ | --------- | ---------- | ------------------------------ |
 | `tencent-tokenhub/hy4-preview`  | hy4 preview (TokenHub)  | text         | 1,024,000 | 64,000     | reasoning-enabled; **default** |
-| `tencent-tokenhub/hy4`          | hy4 (TokenHub)          | text, image  | 1,024,000 | 64,000     | reasoning-enabled; adds `max`  |
+| `tencent-tokenhub/hy4`          | hy4 (TokenHub)          | text, image  | 1,048,576 | 64,000     | reasoning-enabled; vision      |
 | `tencent-tokenhub/hy3`          | hy3 (TokenHub)          | text         | 256,000   | 128,000    | reasoning-enabled; previous GA |
 | `tencent-tokenhub/hy3-preview`  | hy3 preview (TokenHub)  | text         | 256,000   | 128,000    | deprecated; use `hy4-preview`  |
 | `tencent-tokenplan/hy4-preview` | hy4 preview (TokenPlan) | text         | 1,024,000 | 64,000     | reasoning-enabled; **default** |
-| `tencent-tokenplan/hy4`         | hy4 (TokenPlan)         | text, image  | 1,024,000 | 64,000     | reasoning-enabled; adds `max`  |
+| `tencent-tokenplan/hy4`         | hy4 (TokenPlan)         | text, image  | 1,048,576 | 64,000     | reasoning-enabled; vision      |
 | `tencent-tokenplan/hy3`         | hy3 (TokenPlan)         | text         | 256,000   | 128,000    | reasoning-enabled; previous GA |
 
 `hy4-preview` is Tencent Hunyuan's large MoE language model for reasoning, long-context instruction following, code, and agent workflows. Tencent's OpenAI-compatible examples use `hy4-preview` as the model id and support standard chat-completions tool calling plus `reasoning_effort`.
 
-`hy4` is the GA follow-up on the same context and output limits, and the first Hy
-model that accepts image input (JPEG, PNG, WebP, GIF; text output). Its
-`reasoning_effort` ladder accepts `none`, `high`, and `max` — one rung more than
-`hy4-preview`, so a `max` request reaches the API unchanged instead of
-collapsing onto `high`.
+`hy4` is the GA follow-up and the first Hy model that accepts image input (JPEG,
+PNG, WebP, GIF; text output). Its window is 1,048,576 tokens with a 983,040-token
+input ceiling. Like `hy4-preview`, its `reasoning_effort` accepts `none` and
+`high` only; other thinking levels collapse onto `high`.
 
 ## Existing TokenHub configurations
 

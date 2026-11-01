@@ -98,7 +98,7 @@
             "compat": {
               "supportsUsageInStreaming": true,
               "supportsReasoningEffort": true,
-              "supportedReasoningEfforts": ["none", "high", "max"]
+              "supportedReasoningEfforts": ["none", "high"]
             }
           },
           {
@@ -157,7 +157,7 @@
             "compat": {
               "supportsUsageInStreaming": true,
               "supportsReasoningEffort": true,
-              "supportedReasoningEfforts": ["none", "high", "max"]
+              "supportedReasoningEfforts": ["none", "high"]
             }
           },
           {

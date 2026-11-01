@@ -43,12 +43,7 @@ function hyReasoningModel(
     compat: {
       supportsUsageInStreaming: true,
       supportsReasoningEffort: true,
-      supportedReasoningEfforts:
-        id === "hy3-preview"
-          ? ["none", "low", "high"]
-          : id === "hy4"
-            ? ["none", "high", "max"]
-            : ["none", "high"],
+      supportedReasoningEfforts: id === "hy3-preview" ? ["none", "low", "high"] : ["none", "high"],
     },
   } as OpenAICompletionsModel;
 }
@@ -173,7 +168,7 @@ describe("tencent provider plugin", () => {
     expect(payload?.reasoning_effort).toBe("none");
   });
 
-  it("collapses hy4-preview onto its two-rung ladder on both endpoints", async () => {
+  it("collapses hy4 and hy4-preview onto their two-rung ladder on both endpoints", async () => {
     const tokenHubProvider = await getProvider();
     const tokenPlanProvider = await getProvider("tencent-tokenplan");
 
@@ -187,36 +182,22 @@ describe("tencent provider plugin", () => {
       high: "high",
       xhigh: "high",
     };
-    for (const [provider, model] of [
-      [tokenHubProvider, hyReasoningModel("hy4-preview")],
-      [tokenPlanProvider, hyReasoningModel("hy4-preview", "tencent-tokenplan")],
-    ] as const) {
-      for (const [reasoning, rung] of Object.entries(expected)) {
-        expect(
-          capturePayload(provider, model, reasoning)?.reasoning_effort,
-          `${model.provider}/hy4-preview ${reasoning}`,
-        ).toBe(rung);
+    for (const id of ["hy4", "hy4-preview"] as const) {
+      for (const [provider, model] of [
+        [tokenHubProvider, hyReasoningModel(id)],
+        [tokenPlanProvider, hyReasoningModel(id, "tencent-tokenplan")],
+      ] as const) {
+        for (const [reasoning, rung] of Object.entries(expected)) {
+          expect(
+            capturePayload(provider, model, reasoning)?.reasoning_effort,
+            `${model.provider}/${id} ${reasoning}`,
+          ).toBe(rung);
+        }
       }
     }
 
     expect(
       capturePayload(tokenHubProvider, hyReasoningModel("hy3-preview"), "low")?.reasoning_effort,
     ).toBe("low");
-  });
-
-  it("keeps hy4 on its three-rung ladder so max is not collapsed onto high", async () => {
-    // hy4 adds a `max` rung over hy4-preview's none/high. The two-rung rewrite is
-    // scoped to hy3, so routing hy4 through it would silently downgrade `max`.
-    for (const [provider, model] of [
-      [await getProvider(), hyReasoningModel("hy4")],
-      [await getProvider("tencent-tokenplan"), hyReasoningModel("hy4", "tencent-tokenplan")],
-    ] as const) {
-      for (const rung of ["none", "high", "max"] as const) {
-        expect(
-          capturePayload(provider, model, rung)?.reasoning_effort,
-          `${model.provider}/hy4 ${rung}`,
-        ).toBe(rung);
-      }
-    }
   });
 });
